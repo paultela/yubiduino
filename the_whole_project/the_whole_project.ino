@@ -47,6 +47,7 @@ int readInt(const char* prompt) {
   return Serial.parseInt();
 }
 
+// Prints out a hash as a hex string
 void printHash(uint8_t* hash, size_t len) {
   int i;
   for (i=0; i<len; i++) {
@@ -132,6 +133,7 @@ int base32_decode(const uint8_t *encoded, uint8_t *result, int bufSize) {
   return count;
 }
 
+// Generates a TOKEN_LENGTH long token given a secret and timestamp.
 void totp(uint8_t* secret, const size_t len, const long time, char token[TOKEN_LENGTH]) {
   long timestamp = time / INTERVAL;
   uint8_t input[8] = { 0x00, 0x00, 0x00, 0x00 };
@@ -139,18 +141,18 @@ void totp(uint8_t* secret, const size_t len, const long time, char token[TOKEN_L
   input[5] = (timestamp >> 16) & 0xff;
   input[6] = (timestamp >> 8) & 0xff;
   input[7] = timestamp & 0xff;
-  
+
   Sha1.initHmac(secret, len);
   Sha1.write(input, 8);
   uint8_t* hash = Sha1.resultHmac();
-  
+
   uint8_t offset = hash[19] & 0xf;
-  
+
   unsigned long thing = ((hash[offset] & 0x7f) << 24)
                       | ((hash[offset + 1] & 0xff) << 16)
                       | ((hash[offset + 2] & 0xff) << 8)
                       | ((hash[offset + 3] & 0xff));
-  
+
   for (int i = TOKEN_LENGTH - 1; i >= 0; i--) {
     token[i] = (thing % 10) + '0';
     thing /= 10;
