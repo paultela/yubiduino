@@ -4,8 +4,14 @@
 //          SCL pin   -> Arduino Digital 21 (SCL) or the dedicated SCL1 (Digital 71) pin
 
 #include <DS3231.h>
+#include <SPI.h>
+#include <SD.h>
 
-DS3231  rtc(SDA, SCL);
+#define SD_PIN 4
+#define KEY_FILE "key.txt"
+
+DS3231 rtc(SDA, SCL);
+String key = "";
 
 // Gets a UNIX timestamp from the RTC
 long getTimestamp() {
@@ -49,14 +55,36 @@ void command() {
     Serial.println(rtc.getUnixTime(rtc.getTime()));
   } else if (command == "set time") {
     setTime();
+  } else if (command == "key") {
+    Serial.println(key);
   }
 }
 
 void setup() {
-  // put your setup code here, to run once:
+  // Set up the serial terminal
   Serial.begin(115200);
+  
+  // Set up the real time clock
   rtc.begin();
   
+  // Set up the SD card
+  pinMode(10, OUTPUT);
+  if (!SD.begin(SD_PIN)) {
+    Serial.println("SD card is not present.");
+    return;
+  }
+  File keyFile = SD.open(KEY_FILE);
+  if (!keyFile) {
+    Serial.println("SD card has no key.txt");
+    return;
+  }
+  while (keyFile.available()) {
+    char ch = keyFile.read();
+    key.concat(ch);
+  }
+  keyFile.close();
+  
+  // Good to go!
   Serial.println("Running...");
 }
 
