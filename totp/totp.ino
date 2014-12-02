@@ -66,23 +66,17 @@ int base32_decode(const uint8_t *encoded, uint8_t *result, int bufSize) {
   return count;
 }
 
-void totp(const uint8_t* key, const size_t len, const long time, char token[TOKEN_LENGTH]) {
-  Serial.println("Starting totp");
-  long tc = time / INTERVAL;
-  Sha1.initHmac(key, len);
-  Serial.println("inited Hmac");
-  Sha1.write((uint8_t) (tc >> 24));
-  Sha1.write((uint8_t) (tc >> 16));
-  Sha1.write((uint8_t) (tc >> 8));
-  Sha1.write((uint8_t) tc);
- 
-
-
+void totp(uint8_t* secret, const size_t len, const long time, char token[TOKEN_LENGTH]) {
+  long timestamp = time / INTERVAL;
+  uint8_t input[8] = { 0x00, 0x00, 0x00, 0x00 };
+  input[4] = (timestamp >> 24) & 0xff;
+  input[5] = (timestamp >> 16) & 0xff;
+  input[6] = (timestamp >> 8) & 0xff;
+  input[7] = timestamp & 0xff;
   
-  Serial.println("wrote");
-  uint8_t *hash = Sha1.resultHmac();
-  
-  Serial.println("hashed");
+  Sha1.initHmac(secret, len);
+  Sha1.write(input, 8);
+  uint8_t* hash = Sha1.resultHmac();
   
   uint8_t offset = hash[19] & 0xf;
   
@@ -90,15 +84,11 @@ void totp(const uint8_t* key, const size_t len, const long time, char token[TOKE
                       | ((hash[offset + 1] & 0xff) << 16)
                       | ((hash[offset + 2] & 0xff) << 8)
                       | ((hash[offset + 3] & 0xff));
-  Serial.println("thinged");
-  Serial.println(thing);
   
   for (int i = TOKEN_LENGTH - 1; i >= 0; i--) {
     token[i] = (thing % 10) + '0';
     thing /= 10;
   }
-  
-  Serial.println("\ndone");
 } 
 
 void setup() {
@@ -106,25 +96,19 @@ void setup() {
   Serial.begin(115200);
   rtc.begin();
   
-  uint8_t keyBase32[32];
-  String("salvdaxi3ipetshmxf54muq7q4k3cnrj").toCharArray((char *)keyBase32, 32);
+  uint8_t keyBase32[33];
+  String("salvdaxi3ipetshmxf54muq7q4k3cnrj").toCharArray((char *)keyBase32, 33);
   
   uint8_t key[20];
   base32_decode(keyBase32, key, 20);
   
   uint8_t correctKey[20] = { 0x90, 0x17, 0x51, 0x82, 0xe8, 0xda, 0x1e, 0x49, 0xc8, 0xec, 0xb9, 0x7b, 0xc6, 0x52, 0x1f, 0x87, 0x15, 0xb1, 0x36, 0x29 };
   
-  printHash(correctKey, 20);
-  
-  
   char token[TOKEN_LENGTH];
   
-  Serial.println("Trying to do work");
-  
-  totp(key, 20, getTimestamp(), token);
+  totp(correctKey, 20, getTimestamp(), token);
   
   Serial.println(token);
-  Serial.println("All done with work.");
 
 }
 
