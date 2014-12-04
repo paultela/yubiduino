@@ -560,16 +560,6 @@ For the Yubiduino's final test, we set up two-factor authentication on a Gmail a
 Users trust Internet companies to protect more private information than ever before. Two-factor authentication is a field-tested method that provides some much-needed additional account security. With the Yubiduino, we successfully designed and built an assistive device that implements the open, standardized Time-based One-Time Password algorithm, and we proved that success by using it to log into a real-world commercial system over the Internet.
 
 Additional references \\
-http://arduino.cc/en/Main/ArduinoBoardDue \\
-http://arduino.cc/en/reference/serial \\
-http://arduino.cc/en/Reference/MouseKeyboard \\
-http://arduino.cc/en/Reference/SD \\
-http://arduino.cc/en/Reference/SPI \\
-https://www.yubico.com/about/intro/yubikey/ \\
-http://tools.ietf.org/html/rfc6238 \\
-http://en.wikipedia.org/wiki/Time-based\_One-time\_Password\_Algorithm \\
-http://en.wikipedia.org/wiki/Multi-factor\_authentication \\
-http://blog.okcupid.com/ \\
 https://www.authy.com/add-2-factor-authentication-facebook \\
 https://help.github.com/articles/about-two-factor-authentication/ \\
 https://code.google.com/p/google-authenticator/source/browse/libpam/base32.c \\
@@ -593,20 +583,33 @@ https://code.google.com/p/google-authenticator/source/browse/libpam/base32.c \\
 % http://www.ctan.org/tex-archive/biblio/bibtex/contrib/doc/
 % The IEEEtran BibTeX style support page is at:
 % http://www.michaelshell.org/tex/ieeetran/bibtex/
-%\bibliographystyle{IEEEtran}
+\nocite{totp,
+        mfa,
+        totp_david,
+        arduino_due,
+        serial,
+        mouse,
+        strong_mfa,
+        keyboard,
+        sd,
+        spi,
+        rfc,
+        authy,
+        github}
+\bibliographystyle{IEEEtran}
 % argument is your BibTeX string definitions and bibliography database(s)
-%\bibliography{IEEEabrv,../bib/paper}
+\bibliography{IEEEabrv,./report}
 %
 % <OR> manually copy in the resultant .bbl file
 % set second argument of \begin to the number of references
 % (used to reserve space for the reference number labels box)
-\begin{thebibliography}{1}
+%\begin{thebibliography}{1}
 
-\bibitem{IEEEhowto:kopka}
-H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
-  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
+%\bibitem{IEEEhowto:kopka}
+%H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
+%  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
 
-\end{thebibliography}
+%\end{thebibliography}
 
 
 % that's all folks
