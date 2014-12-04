@@ -398,22 +398,7 @@ Two-factor authorization (2FA) is a more secure method for authenticating users 
 
 \section{Introduction}
 % no \IEEEPARstart
-Two-factor authentication is becoming more and more popular in today’s world
-because hacks are becoming more frequent.  Two-factor authentication is an
-addition to your password that requires your password and then something you
-have, like a phone or a YubiKey.  This keeps unwanted people out of your
-accounts because they would not have access to the 2nd factor of the
-authentication because you physically have it. The websites that support
-two-factor authentication usually hold valuable information about the user,
-which is a good reason to have extra security over your account.  Because of
-this, we decided to create a YubiKey out of an Arduino and called it the
-Yubiduino.  The Yubiduino creates the second layer of the two-factor
-authentication and makes your account more secure because no one else will have
-your Yubiduino.  Using the Arduino IDE, we created cryptography code that
-generates a key each time the Arduino is pressed using the secret key and
-current time to add that extra layer of security to the account of your
-choosing.  This Yubiduino will work with and base32-encoded key to allow users
-the option to use the Yubiduino for many different websites.
+Internet services permeate every facet of modern life. Communication, finances, and even our very identities all live online. Through the power of data, Google, Facebook, and dating comany OkCupid know more about their users than their users know about themselves. This trove of personal and financial information is an enticing treasure to malfeasants, who contrive ever more sophisticated attacks through backdoors and social engineering. Multi-factor authentication stands in the way of an attempted account hijacking by verifying identity through a combination of things only the user \textit{knows}, \textit{has}, or \textit{is}. In the case of the Yubiduino, the user's standard login password is something only the user \textit{knows}, and the one-time password is generated from the secret key that nobody but the user \textit{has}. Without both, no attacker can gain illegitimate access to an account. The Yubiduino lets users add this second layer of security to any service that supports Two Factor Authentication via the Time-based One Time Password standard, including Gmail, GitHub, and Facebook.
 
 
 \section{System Design}
@@ -513,6 +498,9 @@ https://www.yubico.com/about/intro/yubikey/ \\
 http://tools.ietf.org/html/rfc6238 \\
 http://en.wikipedia.org/wiki/Time-based\_One-time\_Password\_Algorithm \\
 http://en.wikipedia.org/wiki/Multi-factor\_authentication \\
+http://blog.okcupid.com/ \\
+https://www.authy.com/add-2-factor-authentication-facebook \\
+https://help.github.com/articles/about-two-factor-authentication/ \\
 
 % conference papers do not normally have an appendix
 
