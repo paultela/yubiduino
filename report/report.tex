@@ -369,23 +369,7 @@ Columbus, OH 43210 \\
 
 
 \begin{abstract}
-This project consisted of creating a product similar to a YubiKey out of an
-Arduino Due called the Yubiduino.  Using an Arduino Due, a SD card, a real time
-clock, an Ethernet shield, and a user is allowed to plug in this Arduino into a
-USB port and have a two-factor authentication for whatever program they choose
-that supports this type of functionality.  This 2nd factor consists of a
-one-time password with a shared secret key that uses the current time.  After
-determining the best connections for the Arduino, and the RTC, the code was
-written in C using the open source Arduino IDE software.  A Time-base one time
-password algorithm was written using HMAC-SHA-1 to create a one time password
-for authentication.  This one time password is based off of the current time
-using the real time clock and sent to the computer by making the Arduino act as
-a keyboard. To use, the user will plug in the Yubiduino, log onto the website
-of their choosing, and then for the second form of authentication, push the
-button on the Yubiduino and the key would be produced to finish the login
-process.  The first time the user would like to use this, they would plug it
-into the computer to create the secret key shared between the program they are
-logging into and the Arduino.
+Two-factor authorization (2FA) is a more secure method for authenticating users during login. Many 2FA systems, including the one used by the popular Gmail service, follow the Time-based One Time Password (TOTP) algorithm standardized in RFC 6238. Per the standard, the client and server agree on a shared secret key and starting timestamp at setup. Then, each time the user attempts to log in, the algorithm generates an ephemeral numeric passcode by running a cryptographic function with the shared secret key and the number of elapsed time intervals since the starting timestamp as inputs. However, this system requires a user to obtain and manually enter another unique password every time they log in. Inspired by the commercial YubiKey multi-factor authorization key, we designed and built a device, called a Yubiduino, that calculates and automatically enters the one-time password on the user's behalf. The device consists of an Arduino Due microcontroller, a DS3231 real time clock with a battery backup, a microSD card for persistent storage, and a button that the user presses to activate the algorithm. After setup, the user has only to plug the Yubiduino into a USB port, select the field in the login form for the one-time password, and press the button, and it will calculate and type the password automatically.
 
 \end{abstract}
 % IEEEtran.cls defaults to using nonbold math in the Abstract.
@@ -525,6 +509,11 @@ http://arduino.cc/en/reference/serial \\
 http://arduino.cc/en/Reference/MouseKeyboard \\
 http://arduino.cc/en/Reference/SD \\
 http://arduino.cc/en/Reference/SPI \\
+https://www.yubico.com/about/intro/yubikey/ \\
+http://tools.ietf.org/html/rfc6238 \\
+http://en.wikipedia.org/wiki/Time-based\_One-time\_Password\_Algorithm \\
+http://en.wikipedia.org/wiki/Multi-factor\_authentication \\
+
 % conference papers do not normally have an appendix
 
 % use section* for acknowledgement
