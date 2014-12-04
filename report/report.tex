@@ -468,6 +468,45 @@ logging to the application.
 
 \subsection{Implementation}
 
+* Handling button press
+* Programming the RTC
+* Writing via the keyboard
+* Accessing SD card storage and reading key from file.
+* Base 32 decoding
+* Getting the time from the RTC
+* Fixing Sha library
+* Generating C to pass to SHA1-HMAC
+* Calling SHA1-HMAC
+* Truncating the result according to TOTP spec
+
+Yubiduino's software was implemented in C++ using the AVR-GCC compiler to
+target the Arduino Due board.  This board uses a 32 bit ARM core micro
+controller running at 84Mhz.  This micro controller allows for 4 byte wide data
+operations to occur in one clock cycle, which provides significant performance
+benefits for the cryptographic hashing code.
+
+Several libraries were used in order to build the Yubiduino software package.
+Standard libraries used were \texttt{Serial}, \texttt{Keyboard}, \texttt{SD},
+and \texttt{SPI}.  In addition to these standard libraries, two third party
+libraries were used.  These were \texttt{DS3231} and \texttt{Sha}.
+
+The \texttt{Serial} library provides a way for the Arduino to communicate via a
+serial interface.  This is primarily used for interacting with the Arduino
+using the Arduino IDE's built in Serial Monitor. The \texttt{Keyboard} library
+is used to allow the Arduino to send keyboard input to a connected computer.
+The \texttt{SD} library is used to read and write files on an SD card and
+supports both the FAT16 and FAT32 file systems.  An ethernet shield was used in
+order to provide an SD card input. The \texttt{SPI} library allows for access
+to the Serial Peripheral Interface.  This interface allows for short distance
+communication between micro controllers.  This library was used to communicate
+with the Real Time Clock (RTC) over I\textsuperscript{2}C.
+
+Third party libraries were used when standard library was not available.  The
+\texttt{DS3231} library was used to communicate with the RTC.  It provided
+convince methods for reading the current time and converting the time between
+different formats.  The \texttt{Sha} library provides SHA1 and SHA1-HMAC
+cryptographic hashing capabilities.
+
 \subsection{Evaluation}
 
 
@@ -480,6 +519,12 @@ there.  The Arduino, ethernet shield, SD card, and real time clock made it
 possible to create this second factor to help shield intruders from getting
 into important accounts.
 
+Additional references \\
+http://arduino.cc/en/Main/ArduinoBoardDue \\
+http://arduino.cc/en/reference/serial \\
+http://arduino.cc/en/Reference/MouseKeyboard \\
+http://arduino.cc/en/Reference/SD \\
+http://arduino.cc/en/Reference/SPI \\
 % conference papers do not normally have an appendix
 
 % use section* for acknowledgement
@@ -513,6 +558,7 @@ H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
   0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
 
 \end{thebibliography}
+
 
 % that's all folks
 \end{document}
