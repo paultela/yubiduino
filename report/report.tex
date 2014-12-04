@@ -187,6 +187,8 @@
 % version and documentation can be obtained at:
 % http://www.ctan.org/tex-archive/macros/latex/required/amslatex/math/
 
+\usepackage{siunitx}
+
 
 
 
@@ -402,10 +404,18 @@ Internet services permeate every facet of modern life. Communication, finances, 
 
 
 \section{System Design}
-The process of creating the Yubiduino started with gathering all of the
-hardware needed. Everything needed was an Arduino Due, many wires, a real time
-clock, a button, a breadboard, and an Ethernet Shield.  After the materials
-were collected, the wiring was done as shown in the two figures below.
+Hardware assembly was necessarily the first step in building the Yubiduino. The part list was fairly short:
+
+\begin{itemize}
+  \item Arduino Due microcontroller
+  \item Breadboard
+  \item Arduino-compatible Ethernet shield
+  \item MicroSD card
+  \item DS3231 real-time clock module with backup battery
+  \item Momentary push-button switch
+  \item \SI{10}{\kohm} resistor
+  \item Various wires
+\end{itemize}
 
 % Figure 1
 \begin{figure}[ht]
@@ -415,6 +425,8 @@ were collected, the wiring was done as shown in the two figures below.
 \label{fig:button}
 \end{figure}
 
+Assembly consisted of connecting the button as shown in Figure \ref{fig:button} and the real-time clock (RTC) module as shown in Figure \ref{fig:rtc}, then stacking the Ethernet shield directly on top of the Arduino.
+
 % Figure 2
 \begin{figure}[ht]
 \centering
@@ -423,15 +435,7 @@ were collected, the wiring was done as shown in the two figures below.
 \label{fig:rtc}
 \end{figure}
 
-The first step after the wiring was making the Arduino act as a keyboard when
-the button was pressed.  The next step in the process was getting the real time
-clock to connect with the Arduino and being able to get the time each time the
-button is pressed to allow the new key to be created.   Getting the clock to
-work then lead into reading in the secret key from the SD card, which is the
-second half of the data needed to create the one time password. Then once both
-parts needed for the one time password were retrieved, we wrote the
-cryptography code to combine the two parts into a one time password needed to
-logging to the application.
+As part of two-factor authorization setup, Gmail and Facebook will make available a base32-encoded secret key. To set up the Yubiduino, this key should be copied to a file named ``key.txt'' on the Yubiduino's FAT-formatted microSD card. This must only be done once. When the user logs in online, plugs in the Yubiduino, and activates it by pressing the button, it emulates a USB keyboard and ``types'' the digits of the one-time password into the currently-focused form field. The code itself was determined by running the TOTP algorithm using the shared secret key from the microSD card and the timestamp from the RTC.
 
 \section{Implementation and Evaluation}
 
