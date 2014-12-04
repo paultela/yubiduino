@@ -371,7 +371,7 @@ Columbus, OH 43210 \\
 
 
 \begin{abstract}
-Two-factor authorization (2FA) is a more secure method for authenticating users during login. Many 2FA systems, including the one used by the popular Gmail service, follow the Time-based One Time Password (TOTP) algorithm standardized in RFC 6238. Per the standard, the client and server agree on a shared secret key and starting timestamp at setup. Then, each time the user attempts to log in, the algorithm generates an ephemeral numeric passcode by running a cryptographic function with the shared secret key and the number of elapsed time intervals since the starting timestamp as inputs. However, this system requires a user to obtain and manually enter another unique password every time they log in. Inspired by the commercial YubiKey multi-factor authorization key, we designed and built a device, called a Yubiduino, that calculates and automatically enters the one-time password on the user's behalf. The device consists of an Arduino Due microcontroller, a DS3231 real time clock with a battery backup, a microSD card for persistent storage, and a button that the user presses to activate the algorithm. After setup, the user has only to plug the Yubiduino into a USB port, select the field in the login form for the one-time password, and press the button, and it will calculate and type the password automatically.
+Two-factor authorization (2FA) is a more secure method for authenticating users during login. Many 2FA systems, including the one used by the popular Gmail service, follow the Time-based One Time Password (TOTP) algorithm standardized in RFC 6238. Per the standard, the client and the server agree on a shared secret key and starting timestamp at setup. Then, each time the user attempts to log in, the algorithm generates an ephemeral numeric passcode by running a cryptographic function with the shared secret key and the number of elapsed time intervals since the starting timestamp as inputs. However, this system requires a user to obtain and manually enter another unique password every time they log in. Inspired by the commercial YubiKey multi-factor authorization key, we designed and built a device, called a Yubiduino, that calculates and automatically enters the one-time password on the user's behalf. The device consists of an Arduino Due microcontroller, a DS3231 real time clock with a battery backup, a microSD card for persistent storage, and a button that the user presses to activate the algorithm. After setup, the user has only to plug the Yubiduino into a USB port, select the field in the login form for the one-time password, and press the button, and the Yubiduino will calculate and type the password automatically.
 
 \end{abstract}
 % IEEEtran.cls defaults to using nonbold math in the Abstract.
@@ -400,7 +400,7 @@ Two-factor authorization (2FA) is a more secure method for authenticating users 
 
 \section{Introduction}
 % no \IEEEPARstart
-Internet services permeate every facet of modern life. Communication, finances, and even our very identities all live online. Through the power of data, Google, Facebook, and dating comany OkCupid know more about their users than their users know about themselves. This trove of personal and financial information is an enticing treasure to malfeasants, who contrive ever more sophisticated attacks through backdoors and social engineering. Multi-factor authentication stands in the way of an attempted account hijacking by verifying identity through a combination of things only the user \textit{knows}, \textit{has}, or \textit{is}. In the case of the Yubiduino, the user's standard login password is something only the user \textit{knows}, and the one-time password is generated from the secret key that nobody but the user \textit{has}. Without both, no attacker can gain illegitimate access to an account. The Yubiduino lets users add this second layer of security to any service that supports Two Factor Authentication via the Time-based One Time Password standard, including Gmail, GitHub, and Facebook.
+Internet services permeate every facet of modern life. Communication, finances, and even our very identities all live online. Through the power of data, Google, Facebook, and dating company OkCupid know more about their users than their users know about themselves. This trove of personal and financial information is an enticing treasure to malfeasants, who contrive ever more sophisticated attacks through backdoors and social engineering. Multi-factor authentication stands in the way of an attempted account hijacking by verifying identity through a combination of things only the user \textit{knows}, \textit{has}, or \textit{is}. In the case of the Yubiduino, the user's standard login password is something only the user \textit{knows}, and the one-time password is generated from the secret key that nobody but the user \textit{has}. Without both, no attacker can gain illegitimate access to an account. The Yubiduino lets users add this second layer of security to any service that supports Two Factor Authentication via the Time-based One Time Password standard, including Gmail, GitHub, and Facebook.
 
 
 \section{System Design}
@@ -435,7 +435,7 @@ Assembly consisted of connecting the button as shown in Figure \ref{fig:button} 
 \label{fig:rtc}
 \end{figure}
 
-As part of two-factor authorization setup, Gmail and Facebook will make available a base32-encoded secret key. To set up the Yubiduino, this key should be copied to a file named ``key.txt'' on the Yubiduino's FAT-formatted microSD card. This must only be done once. When the user logs in online, plugs in the Yubiduino, and activates it by pressing the button, it emulates a USB keyboard and ``types'' the digits of the one-time password into the currently-focused form field. The code itself was determined by running the TOTP algorithm using the shared secret key from the microSD card and the timestamp from the RTC.
+As part of two-factor authorization setup, Gmail and Facebook will make available a base32-encoded secret key. To set up the Yubiduino, this key should be copied to a file named ``key.txt'' on the Yubiduino's FAT-formatted microSD card. This needs to be done only once. When the user logs in online, plugs in the Yubiduino, and activates it by pressing the button, it emulates a USB keyboard and ``types'' the digits of the one-time password into the currently-focused form field. The code itself was determined by running the TOTP algorithm using the shared secret key from the microSD card and the timestamp from the RTC.
 
 \section{Implementation and Evaluation}
 
@@ -453,31 +453,29 @@ As part of two-factor authorization setup, Gmail and Facebook will make availabl
 % * Truncating the result according to TOTP spec
 
 Yubiduino's software was implemented in C++ using the AVR-GCC compiler to
-target the Arduino Due board.  This board uses a 32 bit ARM core micro
-controller running at 84Mhz.  This micro controller allows for 4 byte wide data
+target the Arduino Due board.  This board uses a 32-bit ARM core microcontroller running at \SI{84}{\MHz}.  This microcontroller allows for 4-byte wide data
 operations to occur in one clock cycle, which provides significant performance
 benefits for the cryptographic hashing code.
 
 Several libraries were used in order to build the Yubiduino software package.
 Standard libraries used were \texttt{Serial}, \texttt{Keyboard}, \texttt{SD},
-and \texttt{SPI}.  In addition to these standard libraries, two third party
-libraries were used.  These were \texttt{DS3231} and \texttt{Sha}.
+and \texttt{SPI}.  In addition to these standard libraries, two third-party
+libraries were used: \texttt{DS3231} and \texttt{Sha}.
 
 The \texttt{Serial} library provides a way for the Arduino to communicate via a
 serial interface.  This is primarily used for interacting with the Arduino
 using the Arduino IDE's built in Serial Monitor. The \texttt{Keyboard} library
 is used to allow the Arduino to send keyboard input to a connected computer.
 The \texttt{SD} library is used to read and write files on an SD card and
-supports both the FAT16 and FAT32 file systems.  An ethernet shield was used in
+supports both the FAT16 and FAT32 file systems.  An Ethernet shield was used in
 order to provide an SD card input. The \texttt{SPI} library allows for access
 to the Serial Peripheral Interface.  This interface allows for short distance
-communication between micro controllers.  This library was used to communicate
-with the Real Time Clock (RTC) over I\textsuperscript{2}C.
+communication between microcontrollers.  This library was used to communicate
+with the Real Time Clock (RTC) module over I\textsuperscript{2}C.
 
-Third party libraries were used when standard library functionality was not
-available.  The \texttt{DS3231} library was used to communicate with the RTC.
+Third party libraries were used when standard library functionality was insufficient.  The \texttt{DS3231} library was used to communicate with the RTC.
 It provided convenience methods for reading the current time and converting the
-time between different formats.  The \texttt{Sha} library provides SHA1 and
+time between different formats.  The \texttt{Sha} library provided SHA1 and
 HMAC-SHA1 cryptographic hashing capabilities.  In addition to this, a
 \texttt{base32\_decode} function was used from the open source Google
 Authenticator project.  This implementation of \texttt{base32\_decode} was
@@ -486,9 +484,9 @@ intended.
 
 The Arduino API specifies two methods that can be used as program entry points.
 The \texttt{setup} method is run once any time the Arduino is powered on or
-reset.  It is useful for performing setup tasks.  Yubiduino uses this method to
+reset and is useful for performing setup and initialization tasks.  Yubiduino uses this method to
 perform general setup including enabling input and output pins, initializing
-third party libraries, and several other actions outlined below.  The other
+third-party libraries, and several other actions outlined below.  The other
 method is \texttt{loop}.  This method is run continuously as long as the
 Arduino is powered on.  It is generally used to check for specific conditions
 and run event handling routines when they are met.  For Yubiduino, this means
@@ -509,9 +507,8 @@ correct time to the RTC.  The serial utility can also be used to read the
 current time by entering \texttt{time} at the serial monitor.
 
 Once the time is set, the next piece of information needed is the secret key.
-This is determined by the service the user is setting up 2FA with, and will be
-a 32 character string.  This string is base 32 encoded in order to prevent
-confusion resulting from similar looking letters and digits.  Yubiduino will
+This is a 32-character string provided by the two-factor authorization service. This string is base32-encoded in order to prevent
+confusion resulting from similar-looking letters and digits.  Yubiduino will
 look for this key in a file on the SD card called key.txt.  The key can be
 entered with or without spaces.  On startup, the key is read from the file and
 decoded into a 20 byte string.  If the key file cannot be found, Yubiduino will
@@ -522,7 +519,7 @@ at the serial monitor prompt.
 After the \texttt{setup} method has completed, the \texttt{loop} method is
 invoked.  This method continuously reads the \texttt{BUTTON\_PIN}.  When the
 signal from the pin changes, it means the button has been pressed.  At this
-point it allocates memory for a new token, which is stored in a 6 byte char
+point it allocates memory for a new token, which is stored in a 6-byte \texttt{char}
 array.  It also gets the current time from the RTC and converts it into a UNIX
 timestamp.  Yubiduino then passes the secret key, key length, current time, and
 token buffer into the \texttt{totp} method.
@@ -530,20 +527,20 @@ token buffer into the \texttt{totp} method.
 The \texttt{totp} method performs the necessary calculations to turn the
 current time and secret key into a token.  The first step in this process is to
 calculate the time interval, \texttt{C}.  This is done by dividing the current
-time by the interval value, which by default is 30 seconds. \texttt{C} is
-returned as a \texttt{long}, which is a 32 bit signed integer.  It must be
-converted into a 64 bit unsigned integer before it can be hashed.  This is done
-by creating an 8 byte array, setting the 4 most significant bytes to
+time by the interval value, which defaults to 30 seconds. \texttt{C} is
+returned as a \texttt{long}, which is a 32-bit signed integer.  It must be
+converted into a 64-bit unsigned integer before it can be hashed.  This is done
+by creating an 8-byte array, setting the 4 most significant bytes to
 \texttt{0x00}, and setting the remaining 4 bytes to the value stored in the
 \texttt{long}.  The next step is to hash this value using HMAC-SHA1.  The
 \texttt{Sha} library provides a convenient way of doing this.  The secret key
 used for the hash is the same secret key set previously when setting up the
-Yubiduino.  The resulting hash is returned as a 20 byte array, \texttt{H}.  The
+Yubiduino.  The resulting hash is returned as a 20-byte array, \texttt{H}.  The
 next step in the process is to truncate \texttt{H} in such a way that the
 resulting value is cryptographically sound. This is done by taking the 4 least
 significant bits of \texttt{H}, called \texttt{O}.  4 bytes are taken from
 \texttt{H}, starting at \texttt{O}.  The most significant bit is dropped, and
-the remaining bits are stored as an unsigned 32 bit integer, \texttt{I}.  The
+the remaining bits are stored as an unsigned 32-bit integer, \texttt{I}.  The
 token is the lowest 6 digits of \texttt{I} represented in base 10.  If
 \texttt{I} is fewer than 6 digits, it is left padded with 0s.
 
@@ -554,7 +551,7 @@ typos and timing.
 
 
 \subsection{Evaluation}
-For the Yubiduino's final test, we set up two-factor authentication on a Gmail account, saved the shared secret key to the microSD card, and successfully logged into the account on multiple occasions using the Yubiduino to generate and input the authentication code automatically. By the very real-world measure of using it on a popular production system, we consider the Yubiduino a success. Hashing speed was a particular concern going into the project; fortunately, it generates authentication codes apparently instantaneously. However, the Yubiduino is not without room for improvement. At its current size, it is impractical for everyday use, though we believe we have proven the concept and that miniaturization of the hardware is an achievable solution.
+For the Yubiduino's final test, we set up two-factor authentication on a Gmail account, saved the shared secret key to the microSD card, and successfully logged into the account on multiple occasions using the Yubiduino to generate and input the authentication code automatically. By this very real-world measure of using it on a popular production system, we consider the Yubiduino a success. Hashing speed was a particular concern going into the project; fortunately, it generates authentication codes apparently instantaneously. However, the Yubiduino is not without room for improvement: at its current size, it is impractical for everyday use, though we believe we have proven the concept and that miniaturization of the hardware is an achievable solution.
 
 \section{Conclusion}
 Users trust Internet companies to protect more private information than ever before. Two-factor authentication is a field-tested method that provides some much-needed additional account security. With the Yubiduino, we successfully designed and built an assistive device that implements the open, standardized Time-based One-Time Password algorithm, and we proved that success by using it to log into a real-world commercial system over the Internet.
