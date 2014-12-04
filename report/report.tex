@@ -448,8 +448,8 @@ As part of two-factor authorization setup, Gmail and Facebook will make availabl
 % * Base 32 decoding
 % * Getting the time from the RTC
 % * Fixing Sha library
-% * Generating C to pass to SHA1-HMAC
-% * Calling SHA1-HMAC
+% * Generating C to pass to HMAC-SHA1
+% * Calling HMAC-SHA1
 % * Truncating the result according to TOTP spec
 
 Yubiduino's software was implemented in C++ using the AVR-GCC compiler to
@@ -478,7 +478,7 @@ Third party libraries were used when standard library functionality was not
 available.  The \texttt{DS3231} library was used to communicate with the RTC.
 It provided convenience methods for reading the current time and converting the
 time between different formats.  The \texttt{Sha} library provides SHA1 and
-SHA1-HMAC cryptographic hashing capabilities.  In addition to this, a
+HMAC-SHA1 cryptographic hashing capabilities.  In addition to this, a
 \texttt{base32\_decode} function was used from the open source Google
 Authenticator project.  This implementation of \texttt{base32\_decode} was
 chosen to insure that the secret key would be decoded in the exact way
@@ -517,7 +517,7 @@ entered with or without spaces.  On startup, the key is read from the file and
 decoded into a 20 byte string.  If the key file cannot be found, Yubiduino will
 log an error to the serial monitor and refuse to start.  The serial utility can
 also be used to view the key stored on the Yubiduino by entering \texttt{key}
-at the serial monitor prompt.  
+at the serial monitor prompt.
 
 After the \texttt{setup} method has completed, the \texttt{loop} method is
 invoked.  This method continuously reads the \texttt{BUTTON\_PIN}.  When the
@@ -535,7 +535,7 @@ returned as a \texttt{long}, which is a 32 bit signed integer.  It must be
 converted into a 64 bit unsigned integer before it can be hashed.  This is done
 by creating an 8 byte array, setting the 4 most significant bytes to
 \texttt{0x00}, and setting the remaining 4 bytes to the value stored in the
-\texttt{long}.  The next step is to hash this value using SHA1-HMAC.  The
+\texttt{long}.  The next step is to hash this value using HMAC-SHA1.  The
 \texttt{Sha} library provides a convenient way of doing this.  The secret key
 used for the hash is the same secret key set previously when setting up the
 Yubiduino.  The resulting hash is returned as a 20 byte array, \texttt{H}.  The
