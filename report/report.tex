@@ -441,16 +441,16 @@ As part of two-factor authorization setup, Gmail and Facebook will make availabl
 
 \subsection{Implementation}
 
-* Handling button press
-* Programming the RTC
-* Writing via the keyboard
-* Accessing SD card storage and reading key from file.
-* Base 32 decoding
-* Getting the time from the RTC
-* Fixing Sha library
-* Generating C to pass to SHA1-HMAC
-* Calling SHA1-HMAC
-* Truncating the result according to TOTP spec
+% * Handling button press
+% * Programming the RTC
+% * Writing via the keyboard
+% * Accessing SD card storage and reading key from file.
+% * Base 32 decoding
+% * Getting the time from the RTC
+% * Fixing Sha library
+% * Generating C to pass to HMAC-SHA1
+% * Calling HMAC-SHA1
+% * Truncating the result according to TOTP spec
 
 Yubiduino's software was implemented in C++ using the AVR-GCC compiler to
 target the Arduino Due board.  This board uses a 32 bit ARM core micro
@@ -474,11 +474,84 @@ to the Serial Peripheral Interface.  This interface allows for short distance
 communication between micro controllers.  This library was used to communicate
 with the Real Time Clock (RTC) over I\textsuperscript{2}C.
 
-Third party libraries were used when standard library was not available.  The
-\texttt{DS3231} library was used to communicate with the RTC.  It provided
-convince methods for reading the current time and converting the time between
-different formats.  The \texttt{Sha} library provides SHA1 and SHA1-HMAC
-cryptographic hashing capabilities.
+Third party libraries were used when standard library functionality was not
+available.  The \texttt{DS3231} library was used to communicate with the RTC.
+It provided convenience methods for reading the current time and converting the
+time between different formats.  The \texttt{Sha} library provides SHA1 and
+HMAC-SHA1 cryptographic hashing capabilities.  In addition to this, a
+\texttt{base32\_decode} function was used from the open source Google
+Authenticator project.  This implementation of \texttt{base32\_decode} was
+chosen to ensure that the secret key would be decoded in the exact way
+intended.
+
+The Arduino API specifies two methods that can be used as program entry points.
+The \texttt{setup} method is run once any time the Arduino is powered on or
+reset.  It is useful for performing setup tasks.  Yubiduino uses this method to
+perform general setup including enabling input and output pins, initializing
+third party libraries, and several other actions outlined below.  The other
+method is \texttt{loop}.  This method is run continuously as long as the
+Arduino is powered on.  It is generally used to check for specific conditions
+and run event handling routines when they are met.  For Yubiduino, this means
+listening for a button press and generating a token.  If a button press is not
+detected, the Yubiduino will sleep for a short amount of time in order to
+conserve power and clock cycles.
+
+The first step in implementing TOTP on the Arduino was to set the time on the
+RTC.  This is necessary to make sure that the interval offset calculated
+matches what the server expects.  Setting the time on the RTC is an operation
+that only needed to be performed once.  In order to make this operation as user
+friendly as possible, a serial utility was created.  The utility is invoked by
+entering \texttt{set time} at the serial monitor while the Arduino is running.
+The Arduino will recognize this as a valid command and prompt for the current
+UTC year, month, day, hour, minute, and second.  Once this information is
+entered the Arduino will use the \texttt{DS3231} library to communicate the
+correct time to the RTC.  The serial utility can also be used to read the
+current time by entering \texttt{time} at the serial monitor.
+
+Once the time is set, the next piece of information needed is the secret key.
+This is determined by the service the user is setting up 2FA with, and will be
+a 32 character string.  This string is base 32 encoded in order to prevent
+confusion resulting from similar looking letters and digits.  Yubiduino will
+look for this key in a file on the SD card called key.txt.  The key can be
+entered with or without spaces.  On startup, the key is read from the file and
+decoded into a 20 byte string.  If the key file cannot be found, Yubiduino will
+log an error to the serial monitor and refuse to start.  The serial utility can
+also be used to view the key stored on the Yubiduino by entering \texttt{key}
+at the serial monitor prompt.
+
+After the \texttt{setup} method has completed, the \texttt{loop} method is
+invoked.  This method continuously reads the \texttt{BUTTON\_PIN}.  When the
+signal from the pin changes, it means the button has been pressed.  At this
+point it allocates memory for a new token, which is stored in a 6 byte char
+array.  It also gets the current time from the RTC and converts it into a UNIX
+timestamp.  Yubiduino then passes the secret key, key length, current time, and
+token buffer into the \texttt{totp} method.
+
+The \texttt{totp} method performs the necessary calculations to turn the
+current time and secret key into a token.  The first step in this process is to
+calculate the time interval, \texttt{C}.  This is done by dividing the current
+time by the interval value, which by default is 30 seconds. \texttt{C} is
+returned as a \texttt{long}, which is a 32 bit signed integer.  It must be
+converted into a 64 bit unsigned integer before it can be hashed.  This is done
+by creating an 8 byte array, setting the 4 most significant bytes to
+\texttt{0x00}, and setting the remaining 4 bytes to the value stored in the
+\texttt{long}.  The next step is to hash this value using HMAC-SHA1.  The
+\texttt{Sha} library provides a convenient way of doing this.  The secret key
+used for the hash is the same secret key set previously when setting up the
+Yubiduino.  The resulting hash is returned as a 20 byte array, \texttt{H}.  The
+next step in the process is to truncate \texttt{H} in such a way that the
+resulting value is cryptographically sound. This is done by taking the 4 least
+significant bits of \texttt{H}, called \texttt{O}.  4 bytes are taken from
+\texttt{H}, starting at \texttt{O}.  The most significant bit is dropped, and
+the remaining bits are stored as an unsigned 32 bit integer, \texttt{I}.  The
+token is the lowest 6 digits of \texttt{I} represented in base 10.  If
+\texttt{I} is fewer than 6 digits, it is left padded with 0s.
+
+Once the token is calculated, it is sent to the user through the
+\texttt{Keyboard} interface.  This allows the Yubiduino to fill in the correct
+token without the user needing to type it themselves, preventing errors from
+typos and timing.
+
 
 \subsection{Evaluation}
 
@@ -505,6 +578,7 @@ http://en.wikipedia.org/wiki/Multi-factor\_authentication \\
 http://blog.okcupid.com/ \\
 https://www.authy.com/add-2-factor-authentication-facebook \\
 https://help.github.com/articles/about-two-factor-authentication/ \\
+https://code.google.com/p/google-authenticator/source/browse/libpam/base32.c \\
 
 % conference papers do not normally have an appendix
 
