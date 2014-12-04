@@ -481,7 +481,7 @@ time between different formats.  The \texttt{Sha} library provides SHA1 and
 HMAC-SHA1 cryptographic hashing capabilities.  In addition to this, a
 \texttt{base32\_decode} function was used from the open source Google
 Authenticator project.  This implementation of \texttt{base32\_decode} was
-chosen to insure that the secret key would be decoded in the exact way
+chosen to ensure that the secret key would be decoded in the exact way
 intended.
 
 The Arduino API specifies two methods that can be used as program entry points.
@@ -490,8 +490,8 @@ reset.  It is useful for performing setup tasks.  Yubiduino uses this method to
 perform general setup including enabling input and output pins, initializing
 third party libraries, and several other actions outlined below.  The other
 method is \texttt{loop}.  This method is run continuously as long as the
-Arduino is powered on.  It generally used to check for specific conditions and
-run event handling routines when they are met.  For Yubiduino, this means
+Arduino is powered on.  It is generally used to check for specific conditions
+and run event handling routines when they are met.  For Yubiduino, this means
 listening for a button press and generating a token.  If a button press is not
 detected, the Yubiduino will sleep for a short amount of time in order to
 conserve power and clock cycles.
