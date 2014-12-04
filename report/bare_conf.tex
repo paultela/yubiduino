@@ -20,7 +20,7 @@
 %% Legal Notice:
 %% This code is offered as-is without any warranty either expressed or
 %% implied; without even the implied warranty of MERCHANTABILITY or
-%% FITNESS FOR A PARTICULAR PURPOSE! 
+%% FITNESS FOR A PARTICULAR PURPOSE!
 %% User assumes all risk.
 %% In no event shall IEEE or any contributor to this code be liable for
 %% any damages or losses, including, but not limited to, incidental,
@@ -127,12 +127,12 @@
 % *** GRAPHICS RELATED PACKAGES ***
 %
 \ifCLASSINFOpdf
-  % \usepackage[pdftex]{graphicx}
+   \usepackage[pdftex]{graphicx}
   % declare the path(s) where your graphic files are
-  % \graphicspath{{../pdf/}{../jpeg/}}
+   \graphicspath{{./png/}{./jpg/}}
   % and their extensions so you won't have to specify these with
   % every instance of \includegraphics
-  % \DeclareGraphicsExtensions{.pdf,.jpeg,.png}
+   \DeclareGraphicsExtensions{.pdf,.jpeg,.png,.jpg}
 \else
   % or other class option (dvipsone, dvipdf, if not using dvips). graphicx
   % will default to the driver specified in the system graphics.cfg if no
@@ -147,7 +147,7 @@
 % graphicx was written by David Carlisle and Sebastian Rahtz. It is
 % required if you want graphics, photos, etc. graphicx.sty is already
 % installed on most LaTeX systems. The latest version and documentation can
-% be obtained at: 
+% be obtained at:
 % http://www.ctan.org/tex-archive/macros/latex/required/graphics/
 % Another good source of documentation is "Using Imported Graphics in
 % LaTeX2e" by Keith Reckdahl which can be found as epslatex.ps or
@@ -272,7 +272,7 @@
 % IEEEtran.cls handling of captions and this will result in nonIEEE style
 % figure/table captions. To prevent this problem, be sure and preload
 % caption.sty with its "caption=false" package option. This is will preserve
-% IEEEtran.cls handing of captions. Version 1.3 (2005/06/28) and later 
+% IEEEtran.cls handing of captions. Version 1.3 (2005/06/28) and later
 % (recommended due to many improvements over 1.2) of subfig.sty supports
 % the caption=false option directly:
 %\usepackage[caption=false,font=footnotesize]{subfig}
@@ -359,25 +359,34 @@
 % use a multiple column layout for up to three different
 % affiliations
 \author{\IEEEauthorblockN{Jessica Fleck, Brandon Mills, Paul Tela}
-\IEEEauthorblockA{CSE 4471 - The Ohio State University}}
-
-
-
-
-
-% use for special paper notices
-%\IEEEspecialpapernotice{(Invited Paper)}
-
-
-
+\IEEEauthorblockA{Department of Computer Science and Engineering \\
+The Ohio State University \\
+Columbus, OH 43210 \\
+\{fleck.48, mills.511, tela.3\}@osu.edu}}
 
 % make the title area
 \maketitle
 
 
 \begin{abstract}
-%\boldmath
-The abstract goes here.
+This project consisted of creating a product similar to a YubiKey out of an
+Arduino Due called the Yubiduino.  Using an Arduino Due, a SD card, a real time
+clock, an Ethernet shield, and a user is allowed to plug in this Arduino into a
+USB port and have a two-factor authentication for whatever program they choose
+that supports this type of functionality.  This 2nd factor consists of a
+one-time password with a shared secret key that uses the current time.  After
+determining the best connections for the Arduino, and the RTC, the code was
+written in C using the open source Arduino IDE software.  A Time-base one time
+password algorithm was written using HMAC-SHA-1 to create a one time password
+for authentication.  This one time password is based off of the current time
+using the real time clock and sent to the computer by making the Arduino act as
+a keyboard. To use, the user will plug in the Yubiduino, log onto the website
+of their choosing, and then for the second form of authentication, push the
+button on the Yubiduino and the key would be produced to finish the login
+process.  The first time the user would like to use this, they would plug it
+into the computer to create the secret key shared between the program they are
+logging into and the Arduino.
+
 \end{abstract}
 % IEEEtran.cls defaults to using nonbold math in the Abstract.
 % This preserves the distinction between vectors and scalars. However,
@@ -405,127 +414,75 @@ The abstract goes here.
 
 \section{Introduction}
 % no \IEEEPARstart
-This demo file is intended to serve as a ``starter file''
-for IEEE conference papers produced under \LaTeX\ using
-IEEEtran.cls version 1.7 and later.
-% You must have at least 2 lines in the paragraph with the drop letter
-% (should never be an issue)
-I wish you the best of success.
-
-\hfill mds
- 
-\hfill January 11, 2007
-
-\subsection{Subsection Heading Here}
-Subsection text here.
-
-
-\subsubsection{Subsubsection Heading Here}
-Subsubsection text here.
-
-
-% An example of a floating figure using the graphicx package.
-% Note that \label must occur AFTER (or within) \caption.
-% For figures, \caption should occur after the \includegraphics.
-% Note that IEEEtran v1.7 and later has special internal code that
-% is designed to preserve the operation of \label within \caption
-% even when the captionsoff option is in effect. However, because
-% of issues like this, it may be the safest practice to put all your
-% \label just after \caption rather than within \caption{}.
-%
-% Reminder: the "draftcls" or "draftclsnofoot", not "draft", class
-% option should be used if it is desired that the figures are to be
-% displayed while in draft mode.
-%
-%\begin{figure}[!t]
-%\centering
-%\includegraphics[width=2.5in]{myfigure}
-% where an .eps filename suffix will be assumed under latex, 
-% and a .pdf suffix will be assumed for pdflatex; or what has been declared
-% via \DeclareGraphicsExtensions.
-%\caption{Simulation Results}
-%\label{fig_sim}
-%\end{figure}
-
-% Note that IEEE typically puts floats only at the top, even when this
-% results in a large percentage of a column being occupied by floats.
+Two-factor authentication is becoming more and more popular in today’s world
+because hacks are becoming more frequent.  Two-factor authentication is an
+addition to your password that requires your password and then something you
+have, like a phone or a YubiKey.  This keeps unwanted people out of your
+accounts because they would not have access to the 2nd factor of the
+authentication because you physically have it. The websites that support
+two-factor authentication usually hold valuable information about the user,
+which is a good reason to have extra security over your account.  Because of
+this, we decided to create a YubiKey out of an Arduino and called it the
+Yubiduino.  The Yubiduino creates the second layer of the two-factor
+authentication and makes your account more secure because no one else will have
+your Yubiduino.  Using the Arduino IDE, we created cryptography code that
+generates a key each time the Arduino is pressed using the secret key and
+current time to add that extra layer of security to the account of your
+choosing.  This Yubiduino will work with and base32-encoded key to allow users
+the option to use the Yubiduino for many different websites.
 
 
-% An example of a double column floating figure using two subfigures.
-% (The subfig.sty package must be loaded for this to work.)
-% The subfigure \label commands are set within each subfloat command, the
-% \label for the overall figure must come after \caption.
-% \hfil must be used as a separator to get equal spacing.
-% The subfigure.sty package works much the same way, except \subfigure is
-% used instead of \subfloat.
-%
-%\begin{figure*}[!t]
-%\centerline{\subfloat[Case I]\includegraphics[width=2.5in]{subfigcase1}%
-%\label{fig_first_case}}
-%\hfil
-%\subfloat[Case II]{\includegraphics[width=2.5in]{subfigcase2}%
-%\label{fig_second_case}}}
-%\caption{Simulation results}
-%\label{fig_sim}
-%\end{figure*}
-%
-% Note that often IEEE papers with subfigures do not employ subfigure
-% captions (using the optional argument to \subfloat), but instead will
-% reference/describe all of them (a), (b), etc., within the main caption.
+\section{System Design}
+The process of creating the Yubiduino started with gathering all of the
+hardware needed. Everything needed was an Arduino Due, many wires, a real time
+clock, a button, a breadboard, and an Ethernet Shield.  After the materials
+were collected, the wiring was done as shown in the two figures below.
 
+% Figure 1
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\columnwidth]{button.png}
+\caption{Button Circuit}
+\label{fig:button}
+\end{figure}
 
-% An example of a floating table. Note that, for IEEE style tables, the 
-% \caption command should come BEFORE the table. Table text will default to
-% \footnotesize as IEEE normally uses this smaller font for tables.
-% The \label must come after \caption as always.
-%
-%\begin{table}[!t]
-%% increase table row spacing, adjust to taste
-%\renewcommand{\arraystretch}{1.3}
-% if using array.sty, it might be a good idea to tweak the value of
-% \extrarowheight as needed to properly center the text within the cells
-%\caption{An Example of a Table}
-%\label{table_example}
-%\centering
-%% Some packages, such as MDW tools, offer better commands for making tables
-%% than the plain LaTeX2e tabular which is used here.
-%\begin{tabular}{|c||c|}
-%\hline
-%One & Two\\
-%\hline
-%Three & Four\\
-%\hline
-%\end{tabular}
-%\end{table}
+% Figure 2
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\columnwidth]{rtc.jpg}
+\caption{RTC Circuit}
+\label{fig:rtc}
+\end{figure}
 
+The first step after the wiring was making the Arduino act as a keyboard when
+the button was pressed.  The next step in the process was getting the real time
+clock to connect with the Arduino and being able to get the time each time the
+button is pressed to allow the new key to be created.   Getting the clock to
+work then lead into reading in the secret key from the SD card, which is the
+second half of the data needed to create the one time password. Then once both
+parts needed for the one time password were retrieved, we wrote the
+cryptography code to combine the two parts into a one time password needed to
+logging to the application.
 
-% Note that IEEE does not put floats in the very first column - or typically
-% anywhere on the first page for that matter. Also, in-text middle ("here")
-% positioning is not used. Most IEEE journals/conferences use top floats
-% exclusively. Note that, LaTeX2e, unlike IEEE journals/conferences, places
-% footnotes above bottom floats. This can be corrected via the \fnbelowfloat
-% command of the stfloats package.
+\section{Implementation and Evaluation}
 
+\subsection{Implementation}
+
+\subsection{Evaluation}
 
 
 \section{Conclusion}
-The conclusion goes here.
-
-
-
+Security is very important when it comes to a users information. The Yubiduino
+helps make sure that everyone's information is secure and safe from intruders
+while being very easy to use and set up.  Two Factor Authentication makes it
+harder to get into accounts because the second factor has to be physically
+there.  The Arduino, ethernet shield, SD card, and real time clock made it
+possible to create this second factor to help shield intruders from getting
+into important accounts.
 
 % conference papers do not normally have an appendix
 
-
 % use section* for acknowledgement
-\section*{Acknowledgment}
-
-
-The authors would like to thank...
-
-
-
-
 
 % trigger a \newpage just before the given reference
 % number - used to balance the columns on the last page
@@ -557,10 +514,5 @@ H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
 
 \end{thebibliography}
 
-
-
-
 % that's all folks
 \end{document}
-
-
