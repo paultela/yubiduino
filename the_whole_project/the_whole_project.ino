@@ -1,20 +1,18 @@
-// Arduino Due:
-// ----------------------
-// DS3231:  SDA pin   -> Arduino Digital 20 (SDA) or the dedicated SDA1 (Digital 70) pin
-//          SCL pin   -> Arduino Digital 21 (SCL) or the dedicated SCL1 (Digital 71) pin
-
-/*
- * Keyboard Password Printing
+/**
+ * Yubiduino, TOTP on an Arduino
  *
- * When button is pressed, will type "this is your password".
+ * Jessica Fleck, Brandon Mills, and Paul Tela
  *
- * The circuit:
- * - button attached from pin 42 to +3.3V
- * - 10-kilohm resistor attached from pin 42 to ground
+ * Load base 32 encoded secret key onto the SD card in a file called key.txt.
+ * When the button is pressed, a one time password is generated and typed.
  *
+ * A "shell" is available which allows for setting and retrieval of the time
+ * on the RTC.  It also allows for retrieval of the secret key.
  *
- * Based off of the example from:
- * http://www.arduino.cc/en/Tutorial/KeyboardMessage
+ * Uses the DS3231 Library for Arduino, Copyright (C)2014 Henning Karlsen.
+ * Used under the terms of the CC BY-NC-SA 3.0 license.
+ *
+ * Also makes use of portions of the Cryptosuite Library for Arduino.
  */
 
 #include <DS3231.h>
