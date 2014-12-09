@@ -9,6 +9,15 @@
  * A "shell" is available which allows for setting and retrieval of the time
  * on the RTC.  It also allows for retrieval of the secret key.
  *
+ * Port layout:
+ * DS3231:
+ *  SDA pin -> Arduino Digital 20 (SDA) or the dedicated SDA1 (Digital 70) pin
+ *  SCL pin -> Arduino Digital 21 (SCL) or the dedicated SCL1 (Digital 71) pin
+ *
+ * Button pin: 42
+ *
+ * Serial baud: 115200
+ *
  * Uses the DS3231 Library for Arduino, Copyright (C)2014 Henning Karlsen.
  * Used under the terms of the CC BY-NC-SA 3.0 license.
  *
